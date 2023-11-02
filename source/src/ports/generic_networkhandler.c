@@ -942,7 +942,7 @@ int CreateUdpSocket(void) {
   if (setsockopt( g_network_status.udp_io_messaging, SOL_SOCKET, SO_REUSEADDR,
                   (char *)&option_value, sizeof(option_value) ) < 0) {
     OPENER_TRACE_ERR(
-      "error setting socket option SO_REUSEADDR on %s UDP socket\n");
+      "error setting socket option SO_REUSEADDR on %d UDP socket\n", g_network_status.udp_io_messaging);
     CloseUdpSocket(g_network_status.udp_io_messaging);
     return kEipInvalidSocket;
   }
