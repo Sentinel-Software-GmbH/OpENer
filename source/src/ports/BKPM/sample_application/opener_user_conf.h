@@ -30,6 +30,7 @@
 #include "lwip/api.h"
 #include "lwip/apps/fs.h"
 #include "lwip/sockets.h"
+#include "Logger.h"
 
 /** @brief Set this define if you have a CIP File capable device
  *
@@ -202,7 +203,7 @@ static const MilliSeconds kOpenerTimerTickInMilliSeconds = 10;
 /* If we have tracing enabled provide LOG_TRACE macro */
     #include <stdio.h>
 
-    #define LOG_TRACE(...)  fprintf(stderr,__VA_ARGS__)
+    #define LOG_TRACE(...)  LOG_INFO("[OpENer]\t" __VA_ARGS__)
 
      #ifdef IDLING_ASSERT
 /** @brief A specialized assertion command enabled by IDLING_ASSERT that

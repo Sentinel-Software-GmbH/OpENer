@@ -13,8 +13,8 @@
 #include "cipconnectionobject.h"
 #include "OSAL.h"
 
-#define OPENER_THREAD_PRIO			osPriorityAboveNormal
-#define OPENER_STACK_SIZE			  2000
+#define OPENER_THREAD_PRIO			osal_threadPriority_Normal
+#define OPENER_STACK_SIZE			4096
 
 static void opener_thread(void const *argument);
 osThreadId opener_ThreadId;
@@ -73,7 +73,7 @@ void opener_init(struct netif *netif) {
     g_end_stack = 1;  // end in case of network link is down
   }
   if ((g_end_stack == 0) && (eip_status == kEipStatusOk)) {
-    OSAL_threadNew(opener_thread, "OpENer Thread", (osal_ThreadPriority_t)OPENER_THREAD_PRIO, OPENER_STACK_SIZE, netif, NULL);
+    OSAL_threadHandle_t status = OSAL_threadNew(opener_thread, "OpENer Thread", (osal_ThreadPriority_t)OPENER_THREAD_PRIO, OPENER_STACK_SIZE, netif, NULL);
   } else {
     OPENER_TRACE_ERR("NetworkHandlerInitialize error %d\n", eip_status);
   }
@@ -91,6 +91,7 @@ static void opener_thread(void const *argument) {
       OPENER_TRACE_INFO("Network link is down, exiting OpENer\n");
       g_end_stack = 1;	// end loop in case of network link is down
     }
+    OSAL_delay(5u);
   }		// loop ended
   /* clean up network state */
   NetworkHandlerFinish();
