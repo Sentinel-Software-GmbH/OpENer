@@ -11,6 +11,7 @@
 #include "networkconfig.h"
 #include "doublylinkedlist.h"
 #include "cipconnectionobject.h"
+#include "OSAL.h"
 
 #define OPENER_THREAD_PRIO			osPriorityAboveNormal
 #define OPENER_STACK_SIZE			  2000
@@ -23,6 +24,7 @@ volatile int g_end_stack = 0;
  * @brief   Initializes the OpENer Ethernet/IP stack
  *          The network interface has to be configured and the link established
  * @param   netif      address specifying the network interface
+ * @note    netif needs to have mac address and hostname set
  * @retval  None
  */
 void opener_init(struct netif *netif) {
@@ -38,7 +40,7 @@ void opener_init(struct netif *netif) {
     uint8_t iface_mac[6];
     IfaceGetMacAddress(netif, iface_mac);
 
-    /* for a real device the serial number should be unique per device */
+    /* @todo: for a real device the serial number should be unique per device */
     SetDeviceSerialNumber(123456789);
 
     /* unique_connection_id should be sufficiently random or incremented and stored
@@ -70,17 +72,11 @@ void opener_init(struct netif *netif) {
     OPENER_TRACE_WARN("Network link is down, OpENer not started\n");
     g_end_stack = 1;  // end in case of network link is down
   }
-/*
   if ((g_end_stack == 0) && (eip_status == kEipStatusOk)) {
-    osThreadDef(OpENer, opener_thread, OPENER_THREAD_PRIO, 0,
-                OPENER_STACK_SIZE);
-    osThreadCreate(osThread(OpENer), netif);
-    OPENER_TRACE_INFO("OpENer: opener_thread started, free heap size: %d\n",
-           xPortGetFreeHeapSize());
+    OSAL_threadNew(opener_thread, "OpENer Thread", (osal_ThreadPriority_t)OPENER_THREAD_PRIO, OPENER_STACK_SIZE, netif, NULL);
   } else {
     OPENER_TRACE_ERR("NetworkHandlerInitialize error %d\n", eip_status);
   }
-*/
 }
 
 static void opener_thread(void const *argument) {
