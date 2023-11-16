@@ -12,7 +12,7 @@
 #include "opener_user_conf.h"
 
 MilliSeconds GetMilliSeconds(void) {
-  return osKernelSysTick();
+  return OSAL_getTick();
 }
 
 EipStatus NetworkHandlerInitializePlatform(void) {
